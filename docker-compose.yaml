@@ -13,8 +13,7 @@ services:
     image: items-api:latest
     deploy:
       replicas: 3
-      restart-policy:
-        condition: on-failure
+    restart: on-failure
     expose:
       - "3000"
     networks:

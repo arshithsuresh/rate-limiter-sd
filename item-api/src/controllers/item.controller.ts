@@ -6,8 +6,12 @@ import { randomUUID } from "node:crypto";
 export const createItem = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name } = req.body;
+    console.log(name);
     const item: Item = { id: randomUUID(), name };
+    items.push(item);
+    res.status(201).json(item);
   } catch (error) {
+    console.log("ERROR");
     next(error);
   }
 };
