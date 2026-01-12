@@ -1,3 +1,4 @@
+limit_req_zone $binary_remote_addr zone=items_api:10m rate=10r/m;
 
 upstream items_api {
     ip_hash;
@@ -14,6 +15,10 @@ server {
     }
 
     location / {
+        limit_req zone=items_api burst=10 nodelay;
+        limit_req_status 429;
+        limit_conn_status 429;
+
         proxy_pass http://items_api;
 
         proxy_set_header Host $host;
