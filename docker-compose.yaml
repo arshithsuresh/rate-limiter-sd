@@ -1,6 +1,8 @@
 services:
   gateway:
     image: nginx:alpine
+    env_file:
+      - api.env
     ports:
       - 3000:80
     volumes:
@@ -11,11 +13,13 @@ services:
       - prod-network
   prod_api:
     image: items-api:latest
+    env_file:
+      - api.env
     deploy:
       replicas: 3
     restart: on-failure
     expose:
-      - "3000"
+      - $API_PORT
     networks:
       - prod-network
 
