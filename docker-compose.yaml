@@ -19,8 +19,6 @@ services:
     deploy:
       replicas: 3
     restart: on-failure
-    expose:
-      - $API_PORT
     networks:
       - prod-network
 
