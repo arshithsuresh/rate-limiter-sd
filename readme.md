@@ -1,4 +1,4 @@
-# Ratelimiter - NGINX, Docker & NodeJs
+# Ratelimiter - NGINX, Docker & ExpressJs
 ## What are we trying to do
 Create a basic ExpressJs API, use docker containerize it; use docker compose to spin up 3 API Servers and a Nginx as a Ratelimiter, Load balancer, API Gateway.  
 The reason we are using ExpressJS and docker is to visualize how the ratelimiter and load balancers work together to limit the whole request using ip hashing and other methods.
