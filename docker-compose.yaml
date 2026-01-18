@@ -13,6 +13,9 @@ services:
     networks:
       - prod-network
   prod_api:
+    build:
+      context: ./item-api
+      dockerfile: Dockerfile
     image: items-api:latest
     env_file:
       - api.env

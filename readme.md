@@ -85,9 +85,9 @@ Here, I have used a template configuration so that we use environment variables.
 
 ### File: `default.conf.template`  
 We declare a limit_req_zone to set the limits for the rate limiter.  
- `limit_req_zone $binary_remote_addr zone=items_api:10m rate=10r/m;`
+ `limit_req_zone $binary_remote_addr zone=items_api:10m rate=1r/m;`
 
-This sets the ratelimiting to 10 request per minute. This was set to test if the ratelimiting is working.
+This sets the ratelimiting to 1 request per minute. This was set to test if the ratelimiting is working.
 
 You can set this to a more practical limit like 10s/s - 10 requests per second. NGINX tracks the request per milliseconds, so this limit means that you can make 1 request every 100 milliseconds. 
 
@@ -125,7 +125,7 @@ server {
     ....
 
     location / {
-            limit_req zone=items_api burst=10 nodelay;
+            limit_req zone=items_api burst=2 nodelay;
             limit_req_status 429;
             limit_conn_status 429;
 
@@ -139,7 +139,7 @@ server {
 }
 ```
 
-We have set the `limit_req` zone to `items_api`. Setting burst=10 means, a client can request at most 10 requests in a burst. The burst parameter defines how many requests a client can make in excess of the rate specified by the zone.
+We have set the `limit_req` zone to `items_api`. Setting burst=2 means, a client can request at most 2 requests in a burst. The burst parameter defines how many requests a client can make in excess of the rate specified by the zone.
 
 By default, nginx responds with a status 503 when the client exceeds its limit. We can change the status code using limit_req_status and limit_conn_status.
 We set it to 429, which means *Too Many Request*. This way the client knows that it has exceeded the limit. We can add more details in the header like **Retry-After** to inform the clients how long to wait before hitting the server again.
@@ -148,7 +148,7 @@ We set it to 429, which means *Too Many Request*. This way the client knows that
 <summary> Complete <b>File: default.conf.template</b> </summary>
 
 ```nginx
-limit_req_zone $binary_remote_addr zone=items_api:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=items_api:10m rate=1r/m;
 
 upstream items_api {
     ip_hash;
@@ -165,7 +165,7 @@ server {
     }
 
     location / {
-        limit_req zone=items_api burst=10 nodelay;
+        limit_req zone=items_api burst=2 nodelay;
         limit_req_status 429;
         limit_conn_status 429;
 
@@ -235,21 +235,14 @@ Before running the application, ensure the following files are present:
 - *./nginx/default.conf.template* : The Nginx template that utilizes environment variables.
 - *./nginx/nginx.conf* : The main Nginx configuration file.
 
-### 2. Build and Publish the Docker Image  
-
-Open a terminal and navigate to **item-api** folder and run the following command  
-`docker build -t items-api:latest .`   
-
-Now we have the Docker Image for starting the servers. It will be present in the local Docker Images.
-
-### 3. Deployment
+### 2. Deployment
 To launch the entire stack in detached mode, navigate back to the root directory and run:
 
 ```bash
 docker compose up -d
 ```
 
-### 4. Scaling
+### 3. Scaling
 While the file is set to 3 replicas by default, you can manually scale the API service using:
 
 ```bash
@@ -263,7 +256,7 @@ You will see a `429 Too Many Request` once you reach the limit. This means that 
 
 We can have more improvements to this setup by having a `Retry-After` header, etc.
 
-### 5. Stopping the Services
+### 4. Stopping the Services
 To stop and remove all containers and networks:
 
 ```bash
