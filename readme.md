@@ -10,9 +10,9 @@ The reason we are using ExpressJS and docker is to visualize how the ratelimiter
 </picture>
 
 ### How the system is designed
-- An ExpressJs having a simple API
+- An ExpressJs App having a simple API
 - Containerize the API using Docker
-- Use Nginx to add a reverse proxy, load balancer and a rate limiter
+- Use Nginx to setup a reverse proxy, load balancer and a rate limiter
 - Use Docker Compose to spin up the instances
   - 3 ExpressJs API servers
   - A Nginx Server 
@@ -22,14 +22,13 @@ The reason we are using ExpressJS and docker is to visualize how the ratelimiter
 **API End Points**
 - GET [/items]
   - ``` { "id": <UUID>, "name" : "<item_name>" } ``` 
-  - Gets the list of items that is present on that server
+  - Gets the list of items that is present on that server.
 - POST [/items] 
   - ``` body: { "name" : "<item_name>" } ```
-  - Creates a new item with item_name and a randomUUID as id on that server
+  - Creates a new item with item_name and a randomUUID as id on that server.
 
-For making the system a lot simpler, we avoided any database and used a simple dictionary within the server for storing the items.
+For making the system a lot simpler, we don't any database and used a simple dictionary within the server for storing the items.
 These items will be deleted when the server exits or stops.  
-
 
 
 <details>
@@ -123,13 +122,13 @@ How IP Hashing works is that, one IP will always be directed to one server; This
 When getting the items after running the server, if **ip_hash** is used we will see the `id` as same for all subsequent request as each client is always hitting the same server. Change it to `round-robin` then we will see the `id` change with each request from the same client; as request is being directed to different servers on each request.
 
 ### Nginx Load Balancing Strategies  
-- Round Robin (Default): This method cycles through your servers in a sequential order. Each new request is sent to the next server in line, ensuring an even, rotational distribution of the workload.
+- Round Robin (Default): This method cycles through your servers in a sequential order. Each new request is sent to the next server in line, ensuring an even, rotational distribution of the workload. Use *round-robin*.
 
-- Least Connections: This is a "smart" distribution strategy that directs the next request to whichever server is currently handling the fewest active tasks. It is ideal for situations where requests take varying amounts of time to process.
+- Least Connections: This is a "smart" distribution strategy that directs the next request to whichever server is currently handling the fewest active tasks. It is ideal for situations where requests take varying amounts of time to process. Use *least-connected*.
 
-- IP Hash: This approach uses the client's IP address to consistently map them to a specific backend server. It is primarily used for session persistence, ensuring a user stays connected to the same server throughout their visit.
+- IP Hash: This approach uses the client's IP address to consistently map them to a specific backend server. It is primarily used for session persistence, ensuring a user stays connected to the same server throughout their visit. Use *ip-hash*.
 
-Now, let look at the reverse proxy config
+**Now, let look at the reverse proxy config**
 ```nginx
 server {
     ....
